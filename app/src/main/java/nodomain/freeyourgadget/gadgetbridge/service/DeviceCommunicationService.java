@@ -30,7 +30,6 @@ import nodomain.freeyourgadget.gadgetbridge.entities.DaoSession;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.AlarmClockReceiver;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.AlarmReceiver;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.BluetoothConnectReceiver;
-import nodomain.freeyourgadget.gadgetbridge.externalevents.K9Receiver;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.MusicPlaybackReceiver;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.PebbleReceiver;
 import nodomain.freeyourgadget.gadgetbridge.externalevents.PhoneCallReceiver;
@@ -148,7 +147,6 @@ public class DeviceCommunicationService extends Service implements SharedPrefere
 
     private PhoneCallReceiver mPhoneCallReceiver = null;
     private SMSReceiver mSMSReceiver = null;
-    private K9Receiver mK9Receiver = null;
     private PebbleReceiver mPebbleReceiver = null;
     private MusicPlaybackReceiver mMusicPlaybackReceiver = null;
     private TimeChangeReceiver mTimeChangeReceiver = null;
@@ -157,6 +155,15 @@ public class DeviceCommunicationService extends Service implements SharedPrefere
 
     private AlarmReceiver mAlarmReceiver = null;
     private Random mRandom = new Random();
+
+    private final String[] mMusicActions = {
+            "com.android.music.metachanged",
+            "com.android.music.playstatechanged",
+            "com.android.music.queuechanged",
+            "com.android.music.playbackcomplete",
+            "net.sourceforge.subsonic.androidapp.EVENT_META_CHANGED",
+            "com.maxmpz.audioplayer.TPOS_SYNC",
+            "com.maxmpz.audioplayer.STATUS_CHANGED",};
 
     /**
      * For testing!
@@ -586,13 +593,6 @@ public class DeviceCommunicationService extends Service implements SharedPrefere
                 mSMSReceiver = new SMSReceiver();
                 registerReceiver(mSMSReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
             }
-            if (mK9Receiver == null) {
-                mK9Receiver = new K9Receiver();
-                IntentFilter filter = new IntentFilter();
-                filter.addDataScheme("email");
-                filter.addAction("com.fsck.k9.intent.action.EMAIL_RECEIVED");
-                registerReceiver(mK9Receiver, filter);
-            }
             if (mPebbleReceiver == null) {
                 mPebbleReceiver = new PebbleReceiver();
                 registerReceiver(mPebbleReceiver, new IntentFilter("com.getpebble.action.SEND_NOTIFICATION"));
@@ -600,10 +600,9 @@ public class DeviceCommunicationService extends Service implements SharedPrefere
             if (mMusicPlaybackReceiver == null) {
                 mMusicPlaybackReceiver = new MusicPlaybackReceiver();
                 IntentFilter filter = new IntentFilter();
-                filter.addAction("com.android.music.metachanged");
-                filter.addAction("com.android.music.playstatechanged");
-                filter.addAction("com.android.music.playbackcomplete");
-                filter.addAction("net.sourceforge.subsonic.androidapp.EVENT_META_CHANGED");
+                for (String action : mMusicActions){
+                    filter.addAction(action);
+                }
                 registerReceiver(mMusicPlaybackReceiver, filter);
             }
             if (mTimeChangeReceiver == null) {
@@ -636,10 +635,6 @@ public class DeviceCommunicationService extends Service implements SharedPrefere
             if (mSMSReceiver != null) {
                 unregisterReceiver(mSMSReceiver);
                 mSMSReceiver = null;
-            }
-            if (mK9Receiver != null) {
-                unregisterReceiver(mK9Receiver);
-                mK9Receiver = null;
             }
             if (mPebbleReceiver != null) {
                 unregisterReceiver(mPebbleReceiver);

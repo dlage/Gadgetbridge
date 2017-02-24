@@ -108,14 +108,6 @@
             android:defaultValue="when_screen_off"
             android:entries="@array/notification_mode"
             android:entryValues="@array/notification_mode_values"
-            android:key="notification_mode_k9mail"
-            android:title="@string/pref_title_notifications_k9mail"
-            android:summary="%s" />
-
-        <ListPreference
-            android:defaultValue="when_screen_off"
-            android:entries="@array/notification_mode"
-            android:entryValues="@array/notification_mode_values"
             android:key="notification_mode_pebblemsg"
             android:summary="@string/pref_summary_notifications_pebblemsg"
             android:title="@string/pref_title_notifications_pebblemsg" />
@@ -394,6 +386,11 @@
                     android:key="pebble_enable_applogs"
                     android:summary="@string/pref_summary_pebble_enable_applogs"
                     android:title="@string/pref_title_pebble_enable_applogs" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pebble_always_ack_pebblekit"
+                    android:summary="@string/pref_summary_pebble_always_ack_pebblekit"
+                    android:title="@string/pref_title_pebble_always_ack_pebblekit" />
                 <EditTextPreference
                     android:digits="0123456789."
                     android:key="pebble_emu_addr"
